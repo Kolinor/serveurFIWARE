@@ -8,6 +8,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const JCDecaux = require('./routes/JCDecaux');
 const orion = require('./routes/orion');
+const openData = require('./routes/openData');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/', indexRouter);
 app.use('/orion', orion);
 app.use('/users', usersRouter);
 app.use('/jcdecaux', JCDecaux);
+app.use('/opendata', openData);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
