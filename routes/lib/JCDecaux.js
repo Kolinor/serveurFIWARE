@@ -46,6 +46,7 @@ const formatDataToOrion = (arrData) => {
     let newObj = {}
     let date = new Date();
     let d = date.toJSON();
+    const regex = /[,'-()/]/gm;
 
     arrData.forEach((data, idx) => {
         newObj.id = `${data.number}-BikeHireDockingStation-${data.contractName}-${d}`;
@@ -58,8 +59,6 @@ const formatDataToOrion = (arrData) => {
         };
         newObj.availableBikeNumber = {
             "value" : data.totalStands.availabilities.bikes,
-            "mechanicalBikes" : data.totalStands.availabilities.mechanicalBikes,
-            "electricalBikes" : data.totalStands.availabilities.electricalBikes,
             "metadata" : {
                 "timestamp": {
                     "type" : "Datetime",
@@ -67,6 +66,12 @@ const formatDataToOrion = (arrData) => {
                 }
             }
 
+        };
+        newObj.mechanicalBikes = {
+            "value": data.totalStands.availabilities.mechanicalBikes
+        };
+        newObj.electricalBikes = {
+            "value": data.totalStands.availabilities.electricalBikes
         };
         newObj.capacity = {
             "value" : data.totalStands.capacity
@@ -82,10 +87,10 @@ const formatDataToOrion = (arrData) => {
             }
         };
         newObj.address = {
-            "type": "Postal Address",
+            "type": "PostalAddress",
             "value" : {
-                "addressLocality" : data.contractName,
-                "streetAddress" : data.address
+                "addressLocality" : data.contractName.replace(regex, ' '),
+                "streetAddress" : data.address.replace(regex, ' ')
             }
         };
         newObj.dateCreated = {
@@ -97,7 +102,7 @@ const formatDataToOrion = (arrData) => {
             "value": data.lastUpdate
         };
         newObj.Stationname = {
-            "value" : data.name
+            "value" : data.name.replace(regex, ' ')
         };
         arr.push(newObj);
         newObj = {};

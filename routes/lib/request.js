@@ -12,7 +12,6 @@ const requete = (url, method, json) => {
         options.json = true;
         options.body = json;
     }
-    console.log(options);
     return new Promise((resolve, reject) => {
         request(options, function (err, res, body) {
             if (err) {
