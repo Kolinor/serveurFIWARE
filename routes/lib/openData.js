@@ -11,13 +11,12 @@ const getData = async () => {
 const formatDataToOrion = (datas) => {
     let arr = [];
     let newObj = {}
-    console.log(datas);
     let date = new Date();
     let d = date.toJSON();
     const regex = /[,'-()/]/gm;
 
     datas.records.forEach((data, idx) => {
-        newObj.id = `${data.fields.stationcode}-${data.fields.nom_arrondissement_communes}-${d}`;
+        newObj.id = `${data.fields.stationcode}-BikeHireDockingStation-${data.fields.nom_arrondissement_communes}-${d}`;
         newObj.type = "BikeHireDockingStation";
         newObj.status = {
             "value": null
@@ -58,8 +57,8 @@ const formatDataToOrion = (datas) => {
         newObj.address = {
             "type": "PostalAddress",
             "value" : {
-                "addressLocality" : data.fields.name,
-                "streetAddress" : data.fields.nom_arrondissement_communes
+                "addressLocality" : data.fields.name.replace(regex, ' '),
+                "streetAddress" : data.fields.nom_arrondissement_communes.replace(regex, ' ')
             }
         };
         newObj.dateCreated = {
@@ -71,7 +70,7 @@ const formatDataToOrion = (datas) => {
             "value": data.fields.duedate
         };
         newObj.Stationname = {
-            "value" : data.fields.name
+            "value" : data.fields.name.replace(regex, ' ')
         };
         arr.push(newObj);
         newObj = {};

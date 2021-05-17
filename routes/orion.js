@@ -5,13 +5,9 @@ const { getJcdecaux } = require('./lib/JCDecaux');
 const { getOpenData } = require('./lib/openData');
 
 const putAll = async (req, res) => {
-    let arrEntities = [];
-    const a = await getJcdecaux();
-    const b = await getOpenData();
-    arrEntities = a.concat(arrEntities);
-    arrEntities = b.concat(arrEntities);
+    const responseA = await insertAllEntities(await getJcdecaux());
+    const responseB = await insertAllEntities(await getOpenData());
 
-    const response = await insertAllEntities(arrEntities);
     res.send(response);
 };
 
