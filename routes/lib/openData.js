@@ -1,78 +1,77 @@
 const { requete } = require('./request');
 
 const getData = async () => {
-    const url = "https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&q=&rows=200&facet=name&facet=is_installed&facet=is_renting&facet=is_returning&facet=nom_arrondissement_communes&exclude.is_installed=NON"
+    const url = "https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&q=&rows=200&facet=name&facet=is_installed&facet=is_renting&facet=is_returning&facet=nom_arrondissement_communes&exclude.is_installed=NON";
 
     const res = await requete(url, 'GET');
-    console.log(res);
-    return res;
+    const data = JSON.parse(res);
+    return data;
 };
 
-const formatDataToOrion = (arrData) => {
+const formatDataToOrion = (datas) => {
     let arr = [];
     let newObj = {}
+    console.log(datas);
     let date = new Date();
     let d = date.toJSON();
     const regex = /[,'-()/]/gm;
 
-    arrData.forEach((data, idx) => {
-        newObj.id = `${data.records.fields.stationcode}-${data.records.fields.nom_arrondissement_communes}-${d}`;
+    datas.records.forEach((data, idx) => {
+        newObj.id = `${data.fields.stationcode}-${data.fields.nom_arrondissement_communes}-${d}`;
         newObj.type = "BikeHireDockingStation";
         newObj.status = {
             "value": null
         };
         newObj.connected = {
-            "value" : data.records.fields.is_installed
+            "value" : data.fields.is_installed === 'OUI'
         };
         newObj.availableBikeNumber = {
-            "value" : data.records.fields.numbikesavailable,
+            "value" : data.fields.numbikesavailable,
             "metadata" : {
                 "timestamp": {
                     "type" : "Datetime",
-                    "value" : data.records.record_timestamp
+                    "value" : data.record_timestamp
                 }
             }
 
         };
         newObj.mechanicalBikes = {
-            "value" : data.records.fields.mechanical,
+            "value" : data.fields.mechanical,
         };
         newObj.electricalBikes = {
-            "value": data.records.fields.ebike,
+            "value": data.fields.ebike,
         };
         newObj.capacity = {
-            "value" : data.records.fields.capacity
+            "value" : data.fields.capacity
 
         };
         newObj.freeSlotNumber = {
-            "value" : data.records.fields.numdocksavailable
+            "value" : data.fields.numdocksavailable
         };
-
         newObj.location = {
             "type": "geo:json",
             "value": {
                 "type": "Point",
-                "coordinates": [data.records.geometry.coordinates]
+                "coordinates": [data.geometry.coordinates]
             }
         };
         newObj.address = {
             "type": "PostalAddress",
             "value" : {
-                "addressLocality" : data.records.fields.name,
-                "streetAddress" : data.records.fields.nom_arrondissement_communes
+                "addressLocality" : data.fields.name,
+                "streetAddress" : data.fields.nom_arrondissement_communes
             }
         };
-
         newObj.dateCreated = {
             "type": "DateTime",
-            "value": null
+            "value": d
         };
         newObj.dateModified = {
             "type": "DateTime",
-            "value": data.records.duedate
+            "value": data.fields.duedate
         };
         newObj.Stationname = {
-            "value" : data.records.fields.name
+            "value" : data.fields.name
         };
         arr.push(newObj);
         newObj = {};
@@ -81,8 +80,7 @@ const formatDataToOrion = (arrData) => {
 };
 
 const getOpenData = async () => {
-    const arrData = await getData;
-    console.log(arrData);
+    const arrData = await getData();
     return formatDataToOrion(arrData);
 };
 
