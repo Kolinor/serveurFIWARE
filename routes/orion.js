@@ -5,10 +5,23 @@ const { getJcdecaux } = require('./lib/JCDecaux');
 const { getOpenData } = require('./lib/openData');
 
 const putAll = async (req, res) => {
-    const responseA = await insertAllEntities(await getJcdecaux());
-    const responseB = await insertAllEntities(await getOpenData());
+    try {
+        await insertAllEntities(await getJcdecaux());
+        await insertAllEntities(await getOpenData());
+        // const a = await getOpenData();
+        //
+        // const b = [];
+        // for (let i = 0 ; i < 200; i++) b.push(a[i]);
+        //
+        // console.log(b[68]);
+        // console.log(b[69]);
+        // console.log(b[70]);
+        // await insertAllEntities(b);
 
-    res.send(response);
+        res.send();
+    } catch(err) {
+        console.error(err);
+    }
 };
 
 const deleteAll = async (req, res) => {

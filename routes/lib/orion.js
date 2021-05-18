@@ -7,24 +7,26 @@ const deleteAnEntity = async (id) => {
 
 const insertAllEntities = async (entities) => {
     const objToSend = {
-        "actionType": "append",
-        "entities": []
+        actionType: "append",
+        entities: []
     };
     let error;
+    console.log(entities.length);
 
     for (const entity of entities) {
         const idx = entities.indexOf(entity);
         objToSend.entities.push(entity);
-        if (idx % 200 === 0) {
+        if (idx % 300 === 0) {
             error = await requete('http://localhost:1026/v2/op/update', 'POST', objToSend);
             if(error) console.error(error);
             objToSend.entities = [];
             continue;
         }
-        if (idx === entities.length) await requete('http://localhost:1026/v2/op/update', 'POST', objToSend);
+        if (idx === entities.length-1) {
+            error = await requete('http://localhost:1026/v2/op/update', 'POST', objToSend);
+            if(error) console.error(error);
+        }
     }
-    // const reponse = await requete('http://localhost:1026/v2/op/update', 'POST', objToSend);
-    // return reponse;
 };
 
 const deleteAllEntities = async () => {

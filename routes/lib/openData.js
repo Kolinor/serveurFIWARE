@@ -4,8 +4,7 @@ const getData = async () => {
     const url = "https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&q=&rows=200&facet=name&facet=is_installed&facet=is_renting&facet=is_returning&facet=nom_arrondissement_communes&exclude.is_installed=NON";
 
     const res = await requete(url, 'GET');
-    const data = JSON.parse(res);
-    return data;
+    return JSON.parse(res);
 };
 
 const formatDataToOrion = (datas) => {
@@ -14,9 +13,11 @@ const formatDataToOrion = (datas) => {
     let date = new Date();
     let d = date.toJSON();
     const regex = /[,'-()/]/gm;
+    const regexE = /[éèêë]/gm;
+    const regexEspace = /[ ]/gm;
 
     datas.records.forEach((data, idx) => {
-        newObj.id = `${data.fields.stationcode}-BikeHireDockingStation-${data.fields.nom_arrondissement_communes}-${d}`;
+        newObj.id = `${data.fields.stationcode}-BikeHireDockingStation-${data.fields.nom_arrondissement_communes}-${d}`.replace(regexE, 'e').replace(regexEspace, '-');
         newObj.type = "BikeHireDockingStation";
         newObj.status = {
             "value": null
@@ -51,7 +52,7 @@ const formatDataToOrion = (datas) => {
             "type": "geo:json",
             "value": {
                 "type": "Point",
-                "coordinates": [data.geometry.coordinates]
+                "coordinates": data.geometry.coordinates
             }
         };
         newObj.address = {
