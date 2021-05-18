@@ -11,7 +11,6 @@ const insertAllEntities = async (entities) => {
         entities: []
     };
     let error;
-    console.log(entities.length);
 
     for (const entity of entities) {
         const idx = entities.indexOf(entity);
@@ -30,11 +29,22 @@ const insertAllEntities = async (entities) => {
 };
 
 const deleteAllEntities = async () => {
-    const reponse = await requete('http://localhost:1026/v2/entities?limit=1000', 'GET');
-    const reponseParsed = JSON.parse(reponse);
+    const reponse = await requete('http://localhost:1026/v2/types', 'GET');
+    const [reponseParsed] = JSON.parse(reponse);
 
-    for (const value of reponseParsed) {
-        await deleteAnEntity(value.id);
+    if(!reponseParsed) return;
+
+    const i = (reponseParsed.count / 1000);
+    const arr = [];
+    for (let y = 0; y < i; y++) arr.push(y);
+
+    for (const value of arr) {
+        const reponseA = await requete('http://localhost:1026/v2/entities?limit=1000', 'GET');
+        const reponseAParsed = JSON.parse(reponseA);
+
+        for (const value of reponseAParsed) {
+            await deleteAnEntity(value.id);
+        }
     }
 };
 
