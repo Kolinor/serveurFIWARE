@@ -29,6 +29,17 @@ const deleteAll = async (req, res) => {
     res.send();
 };
 
+const update = async (req, res) => {
+    try {
+        await deleteAllEntities();
+        await insertAllEntities(await getJcdecaux());
+        await insertAllEntities(await getOpenData());
+        res.send();
+    } catch(err) {
+        console.error(err);
+    }
+};
+
 router
     .route('/InsertAll')
     .put(putAll);
@@ -36,5 +47,9 @@ router
 router
     .route('/DeleteAll')
     .delete(deleteAll);
+
+router
+    .route('/Update')
+    .put(update);
 
 module.exports = router;
